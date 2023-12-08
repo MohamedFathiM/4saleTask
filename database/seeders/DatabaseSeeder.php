@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Table;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -23,5 +24,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test Customer',
             'phone' => '01015394873',
         ]);
+
+        Table::factory(5)->create();
     }
 }

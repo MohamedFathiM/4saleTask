@@ -14,6 +14,7 @@ class Reservation extends Model
         'table_id',
         'customer_id',
         'from_time',
+        'date',
         'to_time',
     ];
 
