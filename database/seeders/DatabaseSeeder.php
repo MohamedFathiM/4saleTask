@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Meal;
 use App\Models\Table;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -26,5 +27,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Table::factory(5)->create();
+        Meal::factory(20)->create();
     }
 }
