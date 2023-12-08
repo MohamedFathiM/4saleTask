@@ -2,6 +2,7 @@
 
 namespace App\Http\Repositories;
 
+use App\Http\Requests\API\V1\ReserveRequest;
 use App\Models\Reservation;
 use App\Models\Table;
 use Carbon\Carbon;
@@ -30,5 +31,19 @@ class ReservationRepository
             })
             ->where('tables.capacity', '>=', $guestsCount)
             ->doesntExist();
+    }
+
+    public function reserveTable(ReserveRequest $request): ?Reservation
+    {
+        $data = $request->validated();
+
+        $reservation = Reservation::create($data + ['customer_id' => auth()->user()->customer->id]);
+
+        return $reservation;
+    }
+
+    public function isTableGuestAvailable(int $guests_count, int $table_id): bool
+    {
+        return Table::query()->where('id', $table_id)->where('capacity', '>=', $guests_count)->exists();
     }
 }

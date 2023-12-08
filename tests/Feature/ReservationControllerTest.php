@@ -8,6 +8,7 @@ use App\Models\Table;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class ReservationControllerTest extends TestCase
@@ -20,11 +21,11 @@ class ReservationControllerTest extends TestCase
     {
         parent::setup();
         $this->user = Customer::factory()->create()->user;
+        $this->actingAs($this->user);
     }
 
     public function testTableAvailability()
     {
-        $this->actingAs($this->user);
         $table = Table::factory()->create();
 
         // Make a request to the checkTableAvailability endpoint
@@ -42,7 +43,6 @@ class ReservationControllerTest extends TestCase
 
     public function testTableIsNotAvailable()
     {
-        $this->actingAs($this->user);
         $table = Table::factory()->create();
         $customer_id = $this->user->id;
         $date = '2023-12-01';
@@ -69,5 +69,74 @@ class ReservationControllerTest extends TestCase
                 ],
                 'message' => 'Table is not available',
             ]);
+    }
+
+    //**Reserve a table */
+    public function testTableReservationSuccess()
+    {
+        $table = Table::factory()->create();
+        // Create a ReserveRequest instance with the necessary properties
+        $request = [
+            'date' => '2023-12-08',
+            'from_time' => '09:00',
+            'to_time' => '10:00',
+            'table_id' => $table->id,
+            'customer_id' => $this->user->id,
+            'guests_count' => ($table->capacity - 1)
+        ];
+
+        // Call the reserveTable API endpoint
+        $response = $this->postJson(
+            'api/v1/reserve-table',
+            $request
+        );
+
+        // Assert the response
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Table reserved successfully',
+            ]);
+    }
+
+    public function testTableReservationTableNotAvailable()
+    {
+        $this->withoutExceptionHandling();
+
+        $table = Table::factory()->create();
+        // Create a ReserveRequest instance with the necessary properties
+        $request = Reservation::factory()->create([
+            'date' => '2023-12-08',
+            'from_time' => '09:00',
+            'to_time' => '10:00',
+            'table_id' => $table->id,
+        ]);
+
+        // Call the reserveTable API endpoint and expect a ValidationException
+        $this->expectException(ValidationException::class);
+
+        $this->postJson('api/v1/reserve-table', $request->toArray() + [
+            'customer_id' => $this->user->id,
+            'guests_count' => ($table->capacity - 1)
+        ]);
+    }
+
+    public function testTableReservationTableNotSuitableForGuests()
+    {
+        $this->withoutExceptionHandling();
+        $table = Table::factory()->create();
+
+        $request = [
+            'date' => '2023-12-08',
+            'from_time' => '09:00',
+            'to_time' => '10:00',
+            'table_id' => $table->id,
+            'customer_id' => $this->user->id,
+            'guests_count' => ($table->capacity + 1)
+        ];
+
+        // Call the reserveTable API endpoint and expect a ValidationException
+        $this->expectException(ValidationException::class);
+
+        $this->postJson('api/v1/reserve-table', $request);
     }
 }
