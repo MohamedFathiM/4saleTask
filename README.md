@@ -7,6 +7,10 @@
 <div><img src="docs/restuarant.png" alt="Data Structure Diagram"
   height="400" style="display:block;margin:0 auto"><div>
 
+## Postman Collection Link
+
+https://documenter.getpostman.com/view/9020807/2s9YkgE5t4
+
 ## Development environment
 
 ### Requirements
