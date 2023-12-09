@@ -20,7 +20,6 @@ class CustomerFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'phone' => $this->faker->phoneNumber(),
-            'user_id' => User::factory()
         ];
     }
 }

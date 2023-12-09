@@ -20,7 +20,7 @@ class MenuControllerTest extends TestCase
     public function setup(): void
     {
         parent::setup();
-        $this->user = Customer::factory()->create()->user;
+        $this->user = User::factory()->create();
         $this->actingAs($this->user);
     }
 

@@ -14,6 +14,7 @@ class ReserveRequest extends FormRequest
             'from_time' => 'required|date_format:H:i',
             'to_time' => 'required|date_format:H:i|after:from_time',
             'guests_count' => 'required|integer|min:1',
+            'customer_id' => 'required|exists:customers,id',
         ];
     }
 }

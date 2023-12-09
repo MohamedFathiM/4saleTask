@@ -29,18 +29,14 @@ class LoginControllerTest extends TestCase
 
     public function testLoginWithValidCredentials()
     {
-        $customer = \App\Models\Customer::factory()->create();
-        $user = $customer->user;
-
-        $customerRepositoryMock = Mockery::mock(CustomerRepository::class);
-        $customerRepositoryMock->shouldReceive('findByPhone')->andReturn($customer);
+        $waiter = \App\Models\User::factory()->create();
 
         $userRepositoryMock = Mockery::mock(UserRepository::class);
-        $userRepositoryMock->shouldReceive('findByEmail')->andReturn($user);
-        $loginController = new LoginController($customerRepositoryMock, $userRepositoryMock);
+        $userRepositoryMock->shouldReceive('findByEmail')->andReturn($waiter);
+        $loginController = new LoginController($userRepositoryMock);
 
         $request = Request::create('/api/login', 'POST', [
-            'phone' => $customer->phone,
+            'email' => $waiter->email,
             'password' => 'password', // Replace with the correct password
         ]);
 
@@ -52,15 +48,12 @@ class LoginControllerTest extends TestCase
 
     public function testLoginWithInvalidCredentials()
     {
-        $customerRepositoryMock = Mockery::mock(CustomerRepository::class);
-        $customerRepositoryMock->shouldReceive('findByPhone')->andReturnNull();
-
         $userRepositoryMock = Mockery::mock(UserRepository::class);
 
-        $loginController = new LoginController($customerRepositoryMock, $userRepositoryMock);
+        $loginController = new LoginController($userRepositoryMock);
 
         $request = Request::create('/api/login', 'POST', [
-            'phone' => '+1234567890', // Replace with a non-existent phone number
+            'email' => 'mohamed@yahoo.com', // Replace with a non-existent phone number
             'password' => 'password',
         ]);
 

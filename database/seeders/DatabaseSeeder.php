@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Customer;
 use App\Models\Meal;
 use App\Models\Table;
 use App\Models\User;
@@ -17,11 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user = User::factory()->create([
-            'name' => 'Test Customer',
+            'name' => 'Test waiter',
             'email' => 'test@example.com',
         ]);
 
-        $user->customer()->create([
+        Customer::factory()->create([
             'name' => 'Test Customer',
             'phone' => '01015394873',
         ]);

@@ -20,7 +20,7 @@ class ReservationControllerTest extends TestCase
     public function setup(): void
     {
         parent::setup();
-        $this->user = Customer::factory()->create()->user;
+        $this->user = User::factory()->create();
         $this->actingAs($this->user);
     }
 
@@ -43,8 +43,8 @@ class ReservationControllerTest extends TestCase
 
     public function testTableIsNotAvailable()
     {
+        $customer_id = Customer::factory()->create()->id;
         $table = Table::factory()->create();
-        $customer_id = $this->user->id;
         $date = '2023-12-01';
         $from_time = '12:00';
         $to_time = '14:00';
@@ -75,13 +75,15 @@ class ReservationControllerTest extends TestCase
     public function testTableReservationSuccess()
     {
         $table = Table::factory()->create();
+        $customer_id = Customer::factory()->create()->id;
+
         // Create a ReserveRequest instance with the necessary properties
         $request = [
             'date' => '2023-12-08',
             'from_time' => '09:00',
             'to_time' => '10:00',
             'table_id' => $table->id,
-            'customer_id' => $this->user->id,
+            'customer_id' => $customer_id,
             'guests_count' => ($table->capacity - 1)
         ];
 
@@ -101,6 +103,7 @@ class ReservationControllerTest extends TestCase
     public function testTableReservationTableNotAvailable()
     {
         $this->withoutExceptionHandling();
+        $customer_id = Customer::factory()->create()->id;
 
         $table = Table::factory()->create();
         // Create a ReserveRequest instance with the necessary properties
@@ -115,7 +118,7 @@ class ReservationControllerTest extends TestCase
         $this->expectException(ValidationException::class);
 
         $this->postJson('api/v1/reserve-table', $request->toArray() + [
-            'customer_id' => $this->user->id,
+            'customer_id' => $customer_id,
             'guests_count' => ($table->capacity - 1)
         ]);
     }
@@ -124,13 +127,14 @@ class ReservationControllerTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $table = Table::factory()->create();
+        $customer_id = Customer::factory()->create()->id;
 
         $request = [
             'date' => '2023-12-08',
             'from_time' => '09:00',
             'to_time' => '10:00',
             'table_id' => $table->id,
-            'customer_id' => $this->user->id,
+            'customer_id' => $customer_id,
             'guests_count' => ($table->capacity + 1)
         ];
 

@@ -37,7 +37,7 @@ class ReservationRepository
     {
         $data = $request->validated();
 
-        $reservation = Reservation::create($data + ['customer_id' => auth()->user()->customer->id]);
+        $reservation = Reservation::create($data + ['customer_id' => $request->customer_id]);
 
         return $reservation;
     }

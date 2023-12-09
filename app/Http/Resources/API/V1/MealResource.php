@@ -11,10 +11,10 @@ class MealResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'price' => (float) number_format($this->price, 2),
+            'price' => (float) number_format($this->price, 2, '.', ''),
             'description' => $this->description,
             'available_quantity' => (int) $this->available_quantity,
-            'discount' => (float) number_format($this->discount, 2),
+            'discount' => (float) number_format($this->discount, 2, '.', ''),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
