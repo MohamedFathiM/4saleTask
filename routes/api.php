@@ -19,6 +19,8 @@ Route::prefix('v1')->group(function () {
 
         Route::controller(MenuController::class)->prefix('menus')->group(function () {
             Route::get('',  'index');
+            Route::post('/make-order/{reservation}', 'makeOrder');
+            Route::post('/pay/{order}', 'payOrder');
         });
     });
 });

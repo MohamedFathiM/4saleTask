@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Repositories\ReservationRepository;
 use App\Http\Requests\API\V1\CheckAvailabilityRequest;
 use App\Http\Requests\API\V1\ReserveRequest;
+use App\Http\Resources\API\V1\ReservationResource;
 use App\Http\Resources\API\V1\TableResource;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -64,6 +65,7 @@ class ReservationController extends Controller
         $reservation = $this->repository->reserveTable($request);
 
         return $this->apiResource(
+            data: ReservationResource::make($reservation),
             message: $reservation ? 'Table reserved successfully' : 'Try Again',
         );
     }
