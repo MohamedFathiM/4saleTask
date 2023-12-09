@@ -6,6 +6,7 @@ use App\Http\Requests\API\V1\OrderRequest;
 use App\Models\Meal;
 use App\Models\Order;
 use App\Models\Reservation;
+use App\Support\Services\IPayeable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -50,12 +51,14 @@ class OrderRepository
         }
     }
 
-    public function payOrder(Request $request, Order $order): Order
+    public function payOrder(Request $request, Order $order, IPayeable $paymentService): Order
     {
         $order->update([
             'is_paid' => true,
             'paid_at' => now(),
         ]);
+
+        $paymentService->checkout($order);
 
         return $order->refresh();
     }

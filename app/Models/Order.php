@@ -19,8 +19,18 @@ class Order extends Model
         'total',
         'is_paid',
         'paid_at',
+        'services',
+        'taxes',
+        'final_total',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function ($model) {
+            $model->final_total = $model->total;
+        });
+    }
 
     public function orderDetail(): HasOne
     {

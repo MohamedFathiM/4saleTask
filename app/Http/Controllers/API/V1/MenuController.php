@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Enums\PaymentType;
 use App\Http\Controllers\Controller;
 use App\Http\Repositories\MenuRepository;
 use App\Http\Repositories\OrderRepository;
@@ -10,6 +11,7 @@ use App\Http\Resources\API\V1\MealResource;
 use App\Http\Resources\API\V1\OrderResource;
 use App\Models\Order;
 use App\Models\Reservation;
+use App\Support\Services\IPayeable;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -49,7 +51,7 @@ class MenuController extends Controller
         return $this->apiResource(data: OrderResource::make($order));
     }
 
-    public function payOrder(Request $request, Order $order)
+    public function payOrder(Request $request, Order $order, IPayeable $service)
     {
         if ($this->orderRepository->isOrderPaid($order)) {
             throw ValidationException::withMessages([
@@ -57,7 +59,7 @@ class MenuController extends Controller
             ]);
         }
 
-        $this->orderRepository->payOrder($request, $order);
+        $this->orderRepository->payOrder($request, $order, $service);
 
         return $this->apiResource(data: OrderResource::make($order), message: 'Order is paid successfully');
     }
